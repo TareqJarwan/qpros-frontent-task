@@ -1,16 +1,22 @@
 'use client';
 
 // Packages
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AiFillCarryOut, AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { faker } from '@faker-js/faker';
+import bcrypt from 'bcryptjs';
+import { useRouter } from 'next/navigation';
+
+// Context API
+import { AccountContext } from "../context/account.context";
 
 type Inputs = {
     email: string,
     password: string,
-    birthday: Date,
-    subscribe: boolean
+    birthdate: Date,
+    subscribeToNewsletter: boolean
 };
 
 // TODO: 
@@ -19,9 +25,19 @@ type Inputs = {
 
 const SignUpPage = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
+    const { dispatch } = useContext(AccountContext);
+    const router = useRouter()
 
     const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log(data)
+        const newAccount = {
+            ...data,
+            active: false,
+            password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
+            avatar: faker.image.avatar()
+        }
+
+        dispatch({ type: 'SIGNUP', payload: newAccount });
+        router.push('/');
     };
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -121,19 +137,19 @@ const SignUpPage = () => {
                             type="date"
                             placeholder="MM / DD / YYYY"
                             className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                            {...register("birthday", { required: "Date of Birth is required", })}
+                            {...register("birthdate", { required: "Date of Birth is required", })}
                         />
-                        {errors.birthday && <p role="alert" className="text-red-400 text-xs">{errors.birthday.message}</p>}
+                        {errors.birthdate && <p role="alert" className="text-red-400 text-xs">{errors.birthdate.message}</p>}
                         <p className="py-2 text-sm text-gray-400">We want to give you a special treat on your birthday</p>
                     </div>
 
                     <div className="flex items-center mb-4">
-                        <input id="subscribe"
+                        <input id="subscribeToNewsletter"
                             type="checkbox"
                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-600 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                            {...register("subscribe")}
+                            {...register("subscribeToNewsletter")}
                         />
-                        <label htmlFor="subscribe" className="ml-2 block text-sm font-semibold text-gray-500">Subscribe to newsletter</label>
+                        <label htmlFor="subscribeToNewsletter" className="ml-2 block text-sm font-semibold text-gray-500">Subscribe to newsletter</label>
                     </div>
 
                     <div className="mt-2">

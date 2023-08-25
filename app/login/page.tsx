@@ -1,10 +1,15 @@
 'use client';
 
 // Packages
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiFillCarryOut } from "react-icons/ai";
+import { useRouter, useSearchParams } from "next/navigation";
+import bcrypt from 'bcryptjs';
+
+// Context API
+import { AccountContext } from "../context/account.context";
 
 type Inputs = {
   email: string,
@@ -16,10 +21,20 @@ type Inputs = {
 // 2- move the password validation to util file
 
 const LoginPage = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
+  const router = useRouter();
+  const params = useSearchParams();
+
+  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+    defaultValues: {
+      email: params.get('email') || '',
+      password: ''
+    }
+  });
+  const { dispatch } = useContext(AccountContext);
 
   const onSubmit: SubmitHandler<Inputs> = data => {
-    console.log(data)
+    dispatch({ type: 'LOGIN', payload: data });
+    router.push('/');
   };
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
