@@ -1,12 +1,15 @@
 'use client';
 
 // Packages
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { AiOutlineEye, AiOutlineEyeInvisible, AiFillCarryOut } from "react-icons/ai";
+import { AiFillCarryOut } from "react-icons/ai";
 import { useRouter, useSearchParams } from "next/navigation";
-import bcrypt from 'bcryptjs';
+
+// Components
+import CustomInput from "../components/CustomInput";
+import PasswordInput from "../components/PasswordInput";
 
 // Context API
 import { AccountContext } from "../context/account.context";
@@ -15,10 +18,6 @@ type Inputs = {
   email: string,
   password: string,
 };
-
-// TODO: 
-// 1- create input component
-// 2- move the password validation to util file
 
 const LoginPage = () => {
   const router = useRouter();
@@ -36,8 +35,6 @@ const LoginPage = () => {
     dispatch({ type: 'LOGIN', payload: data });
     router.push('/');
   };
-
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
@@ -57,58 +54,27 @@ const LoginPage = () => {
         <div className="relative flex items-center justify-center w-full mt-6 border border-t" />
 
         <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-semibold text-gray-500"
-            >
-              Email <span className="text-red-400">*</span>
-            </label>
-            <input
-              placeholder="example@email.com"
-              className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              aria-invalid={errors.email ? "true" : "false"}
-              {...register("email", {
-                required: "Email Address is required",
-                pattern: {
-                  value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-                  message: 'Invalid email address'
-                }
-              })}
-            />
-            {errors.email && <p role="alert" className="text-red-400 text-xs">{errors.email.message}</p>}
-          </div>
+          <CustomInput
+            label="Email"
+            placeholder="example@email.com"
+            error={errors?.email?.message}
+            required={true}
+            {...register("email", {
+              required: "Email Address is required",
+              pattern: {
+                value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+                message: 'Invalid Email Address'
+              }
+            })}
+          />
 
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-sm font-semibold text-gray-500"
-            >
-              Password <span className="text-red-400">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={isPasswordVisible ? "text" : "password"}
-                placeholder="Enter your password"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-gray-400 focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                {...register("password", {
-                  required: "Password is required"
-                })}
-              />
-              {errors.password && <p role="alert" className="text-red-400 text-xs">{errors.password.message}</p>}
-              <button
-                className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"
-                type='button'
-                onClick={() => setIsPasswordVisible((prevState) => !prevState)}
-              >
-                {isPasswordVisible ? (
-                  <AiOutlineEyeInvisible />
-                ) : (
-                  <AiOutlineEye />
-                )}
-              </button>
-            </div>
-          </div>
+          <PasswordInput
+            label="Password"
+            error={errors?.password?.message}
+            {...register("password", {
+              required: "Password is required"
+            })}
+          />
 
           <div className="mt-2">
             <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500" type="submit">
