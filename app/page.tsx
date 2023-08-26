@@ -40,8 +40,8 @@ const HomePage = () => {
           {state.accounts.length > 0 ? (
             state.accounts.slice(0, ACCOUNTS_LIST_SIZE).map((account, index) => (
               <li className="p-3 flex items-center gap-2" key={index}>
-                <AiOutlineDelete color="red" size="24px" onClick={() => handleDeleteAccount(account)} />
-                <Link href={{ pathname: 'login', query: { email: account.email } }}>
+                <AiOutlineDelete color="red" size="24px" onClick={() => handleDeleteAccount(account)} className="cursor-pointer" />
+                <Link href={{ pathname: 'login', query: { email: account.email } }} className="w-full">
                   <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
                       <Image className="w-8 h-8 rounded-full" width={24} height={24} src={account.avatar} alt="Avatar" />
