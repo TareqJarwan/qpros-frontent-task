@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AccountContextProvider } from './context/account.context'
+import CustomErrorAlert from './components/CustomErrorAlert'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html suppressHydrationWarning={true} lang="en">
       <body suppressHydrationWarning={true} className={inter.className}>
         <AccountContextProvider>
+          <CustomErrorAlert />
           {children}
         </AccountContextProvider>
       </body>
