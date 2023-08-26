@@ -38,6 +38,18 @@ const reducer = (state: StateType, action: any) => {
             }
             return state;
 
+        case "DELETE":
+            if (action.payload) {
+                const updatedAccounts = state.accounts.filter(
+                    account => account.email !== action.payload!.email
+                );
+                return {
+                    ...state,
+                    accounts: updatedAccounts,
+                };
+            }
+            return state;
+
         case "LOGOUT":
             if (payload) {
                 const updatedAccounts = state.accounts.map((account) =>

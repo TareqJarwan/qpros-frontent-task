@@ -4,7 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useContext } from "react";
-import { AiFillCarryOut, AiOutlineCheckCircle, AiOutlineLogout, AiOutlinePlusCircle } from "react-icons/ai";
+import { AiFillCarryOut, AiOutlineCheckCircle, AiOutlineDelete, AiOutlineLogout, AiOutlinePlusCircle } from "react-icons/ai";
 
 // Context API
 import { AccountContext } from "./context/account.context";
@@ -15,6 +15,12 @@ const HomePage = () => {
   const { state, dispatch } = useContext(AccountContext);
 
   const activeAccount = state.accounts.find(account => account.active);
+
+  const handleDeleteAccount = (account: any) => {
+    if (confirm(`Are you sure you want to delete the ${account.email} account?`))
+      dispatch({ type: 'DELETE', payload: account })
+    return;
+  }
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
@@ -33,7 +39,8 @@ const HomePage = () => {
         <ul className="w-full divide-y border rounded-lg p-2 mt-6 divide-gray-200 dark:divide-gray-700">
           {state.accounts.length > 0 ? (
             state.accounts.slice(0, ACCOUNTS_LIST_SIZE).map((account, index) => (
-              <li className="p-3" key={index}>
+              <li className="p-3 flex items-center gap-2" key={index}>
+                <AiOutlineDelete color="red" size="24px" onClick={() => handleDeleteAccount(account)} />
                 <Link href={{ pathname: 'login', query: { email: account.email } }}>
                   <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
